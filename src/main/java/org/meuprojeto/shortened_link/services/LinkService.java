@@ -4,6 +4,8 @@ import org.meuprojeto.shortened_link.dtos.CreateLinkDTO;
 import org.meuprojeto.shortened_link.dtos.ResponseLinkDTO;
 import org.meuprojeto.shortened_link.entities.Link;
 import org.meuprojeto.shortened_link.repositories.LinkRepository;
+import org.meuprojeto.shortened_link.services.exceptions.ResourceAlreadyExistsException;
+import org.meuprojeto.shortened_link.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,10 @@ public class LinkService {
 
         var newLink = slugFy(dto.getNewLink());
         var linkWithSlug = linkRepository.findByNewLink(newLink);
+
+        if (linkWithSlug.isPresent()) {
+            throw new ResourceAlreadyExistsException("O nome para este link já existe");
+        }
 
         if (newLink.isEmpty() || newLink.isBlank()) {
             newLink = generateCode();
@@ -63,6 +69,10 @@ public class LinkService {
     private Link getLinkBySlug(String newLink) {
 
         Optional<Link> link = linkRepository.findByNewLink(newLink);
+
+        if (link.isEmpty()) {
+            throw new ResourceNotFoundException("O link não existe");
+        }
 
         return link.get();
     }

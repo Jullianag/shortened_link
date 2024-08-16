@@ -6,7 +6,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tb_link")
+@Table(name = "tb_links")
 public class Link {
 
     @Id
@@ -17,7 +17,7 @@ public class Link {
     private String originalUrl;
 
     @Column(unique = true, nullable = false)
-    private String slug;
+    private String newLink;
 
     @Column(nullable = false)
     private Integer clicks;
@@ -28,10 +28,10 @@ public class Link {
     public Link() {
     }
 
-    public Link(Long id, String originalUrl, String slug, Integer clicks, Instant moment) {
+    public Link(Long id, String originalUrl, String newLink, Integer clicks, Instant moment) {
         this.id = id;
         this.originalUrl = originalUrl;
-        this.slug = slug;
+        this.newLink = newLink;
         this.clicks = clicks;
         this.moment = moment;
     }
@@ -52,12 +52,12 @@ public class Link {
         this.originalUrl = originalUrl;
     }
 
-    public String getSlug() {
-        return slug;
+    public String getNewLink() {
+        return newLink;
     }
 
-    public void setSlug(String slug) {
-        this.slug = slug;
+    public void setNewLink(String newLink) {
+        this.newLink = newLink;
     }
 
     public Integer getClicks() {

@@ -5,26 +5,26 @@ import org.meuprojeto.shortened_link.entities.Link;
 public class CreateLinkDTO {
 
     private String originalUrl;
-    private String slug;
+    private String newLink;
 
     public CreateLinkDTO() {
     }
 
-    public CreateLinkDTO(String originalUrl, String slug) {
+    public CreateLinkDTO(String originalUrl, String newLink) {
         this.originalUrl = originalUrl;
-        this.slug = slug;
+        this.newLink = newLink;
     }
 
     public CreateLinkDTO(Link entity) {
         originalUrl = entity.getOriginalUrl();
-        slug = entity.getSlug();
+        newLink = entity.getNewLink();
     }
 
     public String getOriginalUrl() {
         return originalUrl;
     }
 
-    public String getSlug() {
-        return slug;
+    public String getNewLink() {
+        return newLink;
     }
 }

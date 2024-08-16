@@ -19,20 +19,20 @@ public class LinkService {
     @Autowired
     private LinkRepository linkRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ResponseLinkDTO createLink(CreateLinkDTO dto) {
 
         Link link = new Link();
         link.setOriginalUrl(dto.getOriginalUrl());
 
-        var slug = slugFy(dto.getSlug());
-        var linkWithSlug = linkRepository.findBySlug(slug);
+        var newLink = slugFy(dto.getNewLink());
+        var linkWithSlug = linkRepository.findByNewLink(newLink);
 
-        if (slug.isEmpty() || slug.isBlank()) {
-            slug = generateCode();
+        if (newLink.isEmpty() || newLink.isBlank()) {
+            newLink = generateCode();
         }
 
-        link.setSlug(slug);
+        link.setNewLink(newLink);
         link.setClicks(0);
 
         link = linkRepository.save(link);
@@ -42,14 +42,15 @@ public class LinkService {
     }
 
     @Transactional
-    public ResponseLinkDTO getLinkDetails(String slug) {
-        Link link = getLinkBySlug(slug);
+    public ResponseLinkDTO getLinkDetails(String newLink) {
+        Link link = getLinkBySlug(newLink);
 
         return new ResponseLinkDTO(link);
     }
 
-    public String visitLink(String slug) {
-        Link link = getLinkBySlug(slug);
+    @Transactional
+    public String visitLink(String newLink) {
+        Link link = getLinkBySlug(newLink);
 
         link.setClicks(link.getClicks() + 1);
         link.setMoment(Instant.now());
@@ -59,9 +60,9 @@ public class LinkService {
         return link.getOriginalUrl();
     }
 
-    private Link getLinkBySlug(String slug) {
+    private Link getLinkBySlug(String newLink) {
 
-        Optional<Link> link = linkRepository.findBySlug(slug);
+        Optional<Link> link = linkRepository.findByNewLink(newLink);
 
         return link.get();
     }
@@ -70,8 +71,8 @@ public class LinkService {
         return UUID.randomUUID().toString().substring(0, 4);
     }
 
-    private String slugFy(String slug) {
-        String normalizedSlug = Normalizer.normalize(slug, Normalizer.Form.NFD);
+    private String slugFy(String newLink) {
+        String normalizedSlug = Normalizer.normalize(newLink, Normalizer.Form.NFD);
 
         return normalizedSlug
                 .replaceAll("[\\p{InCOMBINING_DIACRITICAL_MARKS}]", "")

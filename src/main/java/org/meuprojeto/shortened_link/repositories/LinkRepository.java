@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface LinkRepository extends JpaRepository<Link, Long> {
 
-    Optional<Link> findBySlug(String slug);
+    Optional<Link> findByNewLink(String newLink);
 }

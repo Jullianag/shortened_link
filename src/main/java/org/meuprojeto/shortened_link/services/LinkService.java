@@ -7,6 +7,9 @@ import org.meuprojeto.shortened_link.repositories.LinkRepository;
 import org.meuprojeto.shortened_link.services.exceptions.ResourceAlreadyExistsException;
 import org.meuprojeto.shortened_link.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +67,21 @@ public class LinkService {
         link = linkRepository.save(link);
 
         return link.getOriginalUrl();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ResponseLinkDTO> findAllPaged(Pageable pageable) {
+        Page<Link> list = linkRepository.findAll(pageable);
+        return list.map(x -> new ResponseLinkDTO(x));
+    }
+
+    @Transactional
+    public void deleteLink(Long id) {
+        if (!linkRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Id do link não foi encontrado");
+        }
+
+        linkRepository.deleteById(id);
     }
 
     private Link getLinkBySlug(String newLink) {
